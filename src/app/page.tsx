@@ -64,7 +64,7 @@ export default async function Home({ searchParams }: PageProps) {
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-gradient-to-r from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">
               NIKKAN
               <span className="block text-lg md:text-xl font-medium text-zinc-400 mt-2 tracking-normal">
-                일한 크리에이터 & 인플루언서 큐레이션
+                한일 크리에이터 & 인플루언서 큐레이션
               </span>
             </h1>
           </div>
