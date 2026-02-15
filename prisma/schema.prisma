@@ -19,6 +19,7 @@ model Channel {
   url         String
   category    String
   isVerified  Boolean  @default(false) @map("is_verified")
+  isVisible   Boolean  @default(true) @map("is_visible")
   ownerId     String?  @map("owner_id")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
