@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic"; // Ensure fresh data
 
 export default async function Home({ searchParams }: PageProps) {
   const session = await auth();
-  const isAdmin = session?.user?.email === "01094838047a@gmail.com";
+  const isAdmin = session?.user?.email === process.env.ADMIN_EMAIL;
 
   const resolvedParams = await searchParams;
   const category = resolvedParams.category || "all";

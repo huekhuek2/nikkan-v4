@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as cheerio from "cheerio";
+import { checkAdmin, unauthorizedResponse } from "@/lib/auth-utils";
 
 export async function GET() {
     try {
@@ -18,6 +19,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    if (!await checkAdmin()) {
+        return unauthorizedResponse();
+    }
+
     try {
         const body = await request.json();
         const { url, reason } = body;
@@ -106,6 +111,10 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+    if (!await checkAdmin()) {
+        return unauthorizedResponse();
+    }
+
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get("id");
