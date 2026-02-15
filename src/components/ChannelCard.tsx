@@ -66,7 +66,7 @@ export function ChannelCard({
 
                     {/* Removed Subscriber Count as per request */}
 
-                    <p className="text-sm text-zinc-400 line-clamp-2 leading-relaxed h-[2.5rem]">
+                    <p className="text-sm text-zinc-400 line-clamp-2 leading-relaxed h-[3rem]">
                         {description}
                     </p>
                 </div>

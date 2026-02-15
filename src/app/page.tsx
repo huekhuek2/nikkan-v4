@@ -3,7 +3,7 @@ import { ChannelCard } from "@/components/ChannelCard";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { EditChannelModal } from "@/components/EditChannelModal";
 import { LoginButton } from "@/components/LoginButton";
-import { Search } from "lucide-react";
+import { SearchButton } from "@/components/SearchButton";
 import { prisma } from "@/lib/prisma";
 import { Channel } from "@prisma/client";
 import { auth } from "@/auth";
@@ -12,7 +12,7 @@ import { auth } from "@/auth";
 
 // Define Page Props for SearchParams (Server Component)
 interface PageProps {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; q?: string }>;
 }
 
 export const dynamic = "force-dynamic"; // Ensure fresh data
@@ -23,12 +23,21 @@ export default async function Home({ searchParams }: PageProps) {
 
   const resolvedParams = await searchParams;
   const category = resolvedParams.category || "all";
+  const query = resolvedParams.q || "";
 
   // Fetch from DB
   let channels: Channel[] = [];
   try {
     channels = await prisma.channel.findMany({
-      where: { isVisible: true },
+      where: {
+        isVisible: true,
+        ...(query ? {
+          OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+          ],
+        } : {}),
+      },
       orderBy: { createdAt: "desc" },
     });
   } catch (error) {
@@ -63,17 +72,14 @@ export default async function Home({ searchParams }: PageProps) {
             <LoginButton session={session} />
             <div className="flex gap-3">
               <a
-                href="https://open.kakao.com/o/s9M6o76g"
+                href="https://open.kakao.com/o/sR05SCgi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-2.5 rounded-full bg-[#FAE100] text-[#371D1E] font-bold text-sm hover:bg-[#FCE840] transition-transform hover:scale-105"
+                className="px-6 py-2.5 rounded-full bg-[#FAE100] text-[#371D1E] font-bold text-sm hover:bg-[#FCE840] transition-transform hover:scale-105 whitespace-nowrap"
               >
                 1:1 문의
               </a>
-              <button className="px-6 py-2.5 rounded-full bg-white text-black font-bold text-sm hover:bg-zinc-200 transition-transform hover:scale-105 flex items-center gap-2">
-                <Search className="w-4 h-4" />
-                채널 찾기
-              </button>
+              <SearchButton />
             </div>
           </div>
         </div>
@@ -98,7 +104,7 @@ export default async function Home({ searchParams }: PageProps) {
               ))
             ) : (
               <div className="col-span-full text-center py-20 text-zinc-500">
-                한일 관계의 모든 유튜버를 한눈에! 첫 번째 추천을 남겨주세요.
+                {query ? `"${query}"에 대한 검색 결과가 없습니다.` : "한일 관계의 모든 유튜버를 한눈에! 첫 번째 추천을 남겨주세요."}
               </div>
             )
           }
