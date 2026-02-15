@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Loader2, Plus, Send } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export function RegistrationForm() {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -16,14 +18,25 @@ export function RegistrationForm() {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate API call
-        console.log("Submitting:", formData);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        try {
+            const res = await fetch("/api/channels", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
 
-        alert("추천이 접수되었습니다! (DB 연동 전 데모)");
-        setLoading(false);
-        setIsOpen(false);
-        setFormData({ url: "", reason: "" });
+            if (!res.ok) throw new Error("Failed to register");
+
+            alert("채널이 등록되었습니다!");
+            setIsOpen(false);
+            setFormData({ url: "", reason: "" });
+            router.refresh(); // Refresh server components
+        } catch (error) {
+            console.error(error);
+            alert("등록에 실패했습니다. URL을 확인해주세요.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

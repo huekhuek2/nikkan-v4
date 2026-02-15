@@ -5,10 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const CATEGORIES = [
     { id: "all", label: "전체" },
-    { id: "international", label: "국제부부" },
-    { id: "korea-japan", label: "한일커플" },
-    { id: "vlog", label: "일본취업/일상" },
-    { id: "travel", label: "여행/브이로그" },
+    { id: "couple", label: "한일커플/부부" },
+    { id: "japan_life", label: "일본생활/브이로그" },
+    { id: "korea_life", label: "한국생활/브이로그" },
+    { id: "travel_food", label: "여행/음식" },
+    { id: "culture", label: "언어/문화" },
 ];
 
 export function CategoryFilter() {

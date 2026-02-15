@@ -2,87 +2,32 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { ChannelCard } from "@/components/ChannelCard";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { Search } from "lucide-react";
-
-// Mock Data for initial display
-const MOCK_CHANNELS = [
-  {
-    id: "1",
-    name: "토모토모TomoTomo",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_kXy5y5y5y5y5y5y5y5y5y5y5y5y5y5=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "108만명",
-    description: "한국인 남자친구 유인과 일본인 여자친구 토모의 한일커플 일상 브이로그",
-    url: "https://www.youtube.com/@TomoTomo",
-    category: "한일커플",
-    isVerified: true,
-  },
-  {
-    id: "2",
-    name: "Jin & Hattie 진과 해티",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_n_G_G_G_G_G_G_G_G_G_G_G_G_G_G_=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "180만명",
-    description: "한국 남자 진과 영국 여자 해티의 국제커플 리얼 라이프",
-    url: "https://www.youtube.com/@JinHattie",
-    category: "국제부부",
-    isVerified: true,
-  },
-  {
-    id: "3",
-    name: "카오루 TV",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_p_p_p_p_p_p_p_p_p_p_p_p_p_p_p_=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "89만명",
-    description: "일본인 카오루의 한국 먹방 및 일상",
-    url: "https://www.youtube.com/@KaoruTV",
-    category: "여행/브이로그",
-    isVerified: true,
-  },
-  {
-    id: "4",
-    name: "유이뿅 Yuipyon",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_q_q_q_q_q_q_q_q_q_q_q_q_q_q_q_=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "62만명",
-    description: "한국을 너무 사랑하는 일본인 크리에이터 유이뿅입니다.",
-    url: "https://www.youtube.com/@yuipyon",
-    category: "일본취업/일상",
-    isVerified: false,
-  },
-  {
-    id: "5",
-    name: "마츠다 부장",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_r_r_r_r_r_r_r_r_r_r_r_r_r_r_r_=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "110만명",
-    description: "오사카에 사는 남자 TV. 일본 회사원의 리얼한 일상.",
-    url: "https://www.youtube.com/@osakamatsuda",
-    category: "일본취업/일상",
-    isVerified: false,
-  },
-  {
-    id: "6",
-    name: "사쿠라 메모리즈",
-    thumbnail: "https://yt3.googleusercontent.com/ytc/AIdro_s_s_s_s_s_s_s_s_s_s_s_s_s_s_s_=s900-c-k-c0x00ffffff-no-rj",
-    subscribers: "45만명",
-    description: "한일부부의 좌충우돌 육아 일기",
-    url: "https://www.youtube.com/@sakuramemories",
-    category: "한일커플",
-    isVerified: false,
-  },
-];
+import { prisma } from "@/lib/prisma";
 
 // Define Page Props for SearchParams (Server Component)
 interface PageProps {
   searchParams: Promise<{ category?: string }>;
 }
 
+export const dynamic = "force-dynamic"; // Ensure fresh data
+
 export default async function Home({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const category = resolvedParams.category || "all";
 
+  // Fetch from DB
+  const channels = await prisma.channel.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
   const filteredChannels = category === "all"
-    ? MOCK_CHANNELS
-    : MOCK_CHANNELS.filter(c => c.category === (
-      category === "international" ? "국제부부" :
-        category === "korea-japan" ? "한일커플" :
-          category === "vlog" ? "일본취업/일상" :
-            category === "travel" ? "여행/브이로그" : ""
+    ? channels
+    : channels.filter(c => c.category === (
+      category === "couple" ? "한일커플/부부" :
+        category === "japan_life" ? "일본생활/브이로그" :
+          category === "korea_life" ? "한국생활/브이로그" :
+            category === "travel_food" ? "여행/음식" :
+              category === "culture" ? "언어/문화" : ""
     ));
 
   return (
@@ -97,10 +42,10 @@ export default async function Home({ searchParams }: PageProps) {
         {/* Header */}
         <header className="text-center mb-12 space-y-4">
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">
-            NIKKAN
+            한일/日韓
           </h1>
           <p className="text-zinc-400 text-lg md:text-xl font-light">
-            한일 커플 & 유튜버 큐레이션
+            한일 / 日韓 YouTuber 큐레이션
           </p>
 
           {/* Search Bar Placeholder */}
@@ -132,7 +77,7 @@ export default async function Home({ searchParams }: PageProps) {
             ))
           ) : (
             <div className="col-span-full text-center py-20 text-zinc-500">
-              해당 카테고리의 채널이 없습니다.
+              한일 관계의 모든 유튜버를 한눈에! 첫 번째 추천을 남겨주세요.
             </div>
           )}
         </div>
