@@ -14,6 +14,7 @@ interface ChannelCardProps {
     url: string;
     category: string;
     isVerified: boolean;
+    isAdmin?: boolean;
 }
 
 export function ChannelCard({
@@ -25,6 +26,7 @@ export function ChannelCard({
     url,
     category,
     isVerified,
+    isAdmin,
 }: ChannelCardProps) {
     const handleClaimClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -72,25 +74,27 @@ export function ChannelCard({
 
             {/* Footer / Action Area - separate from Link */}
             <div className="bg-zinc-950/50 p-3 border-t border-zinc-800 flex items-center justify-between mt-auto">
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // Open edit modal logic will be implemented here or passed as prop
-                        // For now, simpler to emit an event or use a client component approach
-                        // Since this is a server component rendered list, maybe we need a client wrapper or context?
-                        // Actually ChannelCard is "use client".
-                        // Let's use a custom event or a simple prompt for now, or better: a new component `EditChannelModal` triggers here.
-                        // I'll dispatch a custom event that a global modal listener can pick up, or better yet, put the modal IN the card? No, inefficient.
-                        // Best: ChannelCard triggers a state in a parent provider. But that's complex for this quick fix.
-                        // Quickest: Put the EditModal inside ChannelCard but only render when open.
-                        window.dispatchEvent(new CustomEvent('openEditModal', { detail: { id, name, category, description } }));
-                    }}
-                    className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors ml-auto"
-                >
-                    <User className="w-3 h-3" />
-                    정보 수정
-                </button>
+                {isAdmin && (
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            // Open edit modal logic will be implemented here or passed as prop
+                            // For now, simpler to emit an event or use a client component approach
+                            // Since this is a server component rendered list, maybe we need a client wrapper or context?
+                            // Actually ChannelCard is "use client".
+                            // Let's use a custom event or a simple prompt for now, or better: a new component `EditChannelModal` triggers here.
+                            // I'll dispatch a custom event that a global modal listener can pick up, or better yet, put the modal IN the card? No, inefficient.
+                            // Best: ChannelCard triggers a state in a parent provider. But that's complex for this quick fix.
+                            // Quickest: Put the EditModal inside ChannelCard but only render when open.
+                            window.dispatchEvent(new CustomEvent('openEditModal', { detail: { id, name, category, description } }));
+                        }}
+                        className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors ml-auto"
+                    >
+                        <User className="w-3 h-3" />
+                        정보 수정
+                    </button>
+                )}
             </div>
         </div>
     );
