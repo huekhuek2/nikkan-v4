@@ -3,6 +3,7 @@ import { ChannelCard } from "@/components/ChannelCard";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { Channel } from "@prisma/client";
 
 // Define Page Props for SearchParams (Server Component)
 interface PageProps {
@@ -16,9 +17,16 @@ export default async function Home({ searchParams }: PageProps) {
   const category = resolvedParams.category || "all";
 
   // Fetch from DB
-  const channels = await prisma.channel.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let channels: Channel[] = [];
+  try {
+    channels = await prisma.channel.findMany({
+      where: { isVisible: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Database Error:", error);
+    // Fail gracefully with empty list or separate error state
+  }
 
   const filteredChannels = category === "all"
     ? channels
