@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id          String   @id @default(cuid())
+  name        String
+  thumbnail   String
+  subscribers String   @default("0") // Simplified for now
+  description String
+  url         String
+  category    String
+  isVerified  Boolean  @default(false) @map("is_verified")
+  ownerId     String?  @map("owner_id")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("channels")
+}
