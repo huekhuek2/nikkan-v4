@@ -29,9 +29,8 @@ export async function POST(request: Request) {
             );
         }
 
-        // simplistic regex for youtube channel/handle
-        // e.g. https://www.youtube.com/@handle or https://www.youtube.com/channel/ID
-        if (!url.includes("youtube.com/") && !url.includes("youtu.be/")) {
+        // simplistic validation: just check if it contains "youtube" or "youtu.be"
+        if (!url.includes("youtube") && !url.includes("youtu.be")) {
             return NextResponse.json(
                 { error: "Invalid YouTube URL" },
                 { status: 400 }

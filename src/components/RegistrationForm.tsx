@@ -64,7 +64,7 @@ export function RegistrationForm() {
                                 </label>
                                 <input
                                     required
-                                    type="url"
+                                    type="text"
                                     placeholder="https://youtube.com/@..."
                                     className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                                     value={formData.url}
