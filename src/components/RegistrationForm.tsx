@@ -25,15 +25,18 @@ export function RegistrationForm() {
                 body: JSON.stringify(formData),
             });
 
-            if (!res.ok) throw new Error("Failed to register");
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Failed to register");
+            }
 
             alert("채널이 등록되었습니다!");
             setIsOpen(false);
             setFormData({ url: "", reason: "" });
             router.refresh(); // Refresh server components
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("등록에 실패했습니다. URL을 확인해주세요.");
+            alert(`등록에 실패했습니다: ${error.message}`);
         } finally {
             setLoading(false);
         }

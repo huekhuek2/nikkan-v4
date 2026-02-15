@@ -29,8 +29,9 @@ export async function POST(request: Request) {
             );
         }
 
-        // simplistic validation: just check if it contains "youtube" or "youtu.be"
-        if (!url.includes("youtube") && !url.includes("youtu.be")) {
+        // simplistic validation: just check if it contains "youtube" or "youtu.be" (case-insensitive)
+        const lowerUrl = url.toLowerCase();
+        if (!lowerUrl.includes("youtube") && !lowerUrl.includes("youtu.be")) {
             return NextResponse.json(
                 { error: "Invalid YouTube URL" },
                 { status: 400 }
@@ -44,25 +45,35 @@ export async function POST(request: Request) {
         let subscribers = "0";
 
         try {
-            const response = await fetch(url, {
+            // Handle Korean/special characters in URL by encoding if not already encoded
+            // decodeURI first to ensure we don't double-encode, then encodeURI
+            const safeUrl = encodeURI(decodeURI(url));
+
+            const response = await fetch(safeUrl, {
                 headers: {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7", // Prefer Korean for Korean channels
                 }
             });
-            const html = await response.text();
-            const $ = cheerio.load(html);
 
-            const ogTitle = $('meta[property="og:title"]').attr('content');
-            const ogImage = $('meta[property="og:image"]').attr('content');
-            const ogDesc = $('meta[property="og:description"]').attr('content');
+            if (!response.ok) {
+                console.warn(`Failed to fetch channel page: ${response.status} ${response.statusText}`);
+                // Proceed with defaults if fetch fails, don't crash the registration
+            } else {
+                const html = await response.text();
+                const $ = cheerio.load(html);
 
-            if (ogTitle) name = ogTitle;
-            if (ogImage) thumbnail = ogImage;
-            // User provided reason > ogDesc, usually. Or combine?
-            // Let's use user reason if present, otherwise default to ogDesc or "No description".
-            if (!reason && ogDesc) {
-                description = ogDesc;
+                const ogTitle = $('meta[property="og:title"]').attr('content');
+                const ogImage = $('meta[property="og:image"]').attr('content');
+                const ogDesc = $('meta[property="og:description"]').attr('content');
+
+                if (ogTitle) name = ogTitle;
+                if (ogImage) thumbnail = ogImage;
+                // User provided reason > ogDesc, usually. Or combine?
+                // Let's use user reason if present, otherwise default to ogDesc or "No description".
+                if (!reason && ogDesc) {
+                    description = ogDesc;
+                }
             }
 
         } catch (scrapeError) {
@@ -83,10 +94,12 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(newChannel);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to create channel:", error);
+        // Return specific error message if possible
+        const errorMessage = error.message || "Failed to create channel";
         return NextResponse.json(
-            { error: "Failed to create channel" },
+            { error: errorMessage },
             { status: 500 }
         );
     }
