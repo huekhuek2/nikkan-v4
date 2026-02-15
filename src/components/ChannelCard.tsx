@@ -84,7 +84,7 @@ export function ChannelCard({
                         // I'll dispatch a custom event that a global modal listener can pick up, or better yet, put the modal IN the card? No, inefficient.
                         // Best: ChannelCard triggers a state in a parent provider. But that's complex for this quick fix.
                         // Quickest: Put the EditModal inside ChannelCard but only render when open.
-                        document.dispatchEvent(new CustomEvent('openEditModal', { detail: { id, name, category, description } }));
+                        window.dispatchEvent(new CustomEvent('openEditModal', { detail: { id, name, category, description } }));
                     }}
                     className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors ml-auto"
                 >
