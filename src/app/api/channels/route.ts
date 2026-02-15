@@ -104,3 +104,29 @@ export async function POST(request: Request) {
         );
     }
 }
+
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json(
+                { error: "Channel ID is required" },
+                { status: 400 }
+            );
+        }
+
+        await prisma.channel.delete({
+            where: { id },
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Failed to delete channel:", error);
+        return NextResponse.json(
+            { error: "Failed to delete channel" },
+            { status: 500 }
+        );
+    }
+}

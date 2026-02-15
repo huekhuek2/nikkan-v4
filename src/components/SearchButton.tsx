@@ -38,7 +38,7 @@ export function SearchButton() {
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-2xl animate-in slide-in-from-top-4 duration-200">
                         <form onSubmit={handleSearch} className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
