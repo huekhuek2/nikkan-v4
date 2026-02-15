@@ -5,6 +5,8 @@ import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Channel } from "@prisma/client";
 
+// Verified types with prisma generate
+
 // Define Page Props for SearchParams (Server Component)
 interface PageProps {
   searchParams: Promise<{ category?: string }>;
