@@ -88,7 +88,7 @@ export async function POST(request: Request) {
                 thumbnail,
                 description,
                 subscribers, // We can't easily get this from og tags usually, needs API or regex on body. defaulting to 0.
-                category: "미분류", // Default category
+                category: body.category || "미분류", // Use provided category or default
                 isVerified: false,
             },
         });

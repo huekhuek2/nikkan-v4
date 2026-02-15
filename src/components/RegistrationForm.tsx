@@ -5,12 +5,15 @@ import { Loader2, Plus, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { CATEGORIES } from "@/lib/constants";
+
 export function RegistrationForm() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         url: "",
+        category: "",
         reason: "",
     });
 
@@ -32,7 +35,7 @@ export function RegistrationForm() {
 
             alert("채널이 등록되었습니다!");
             setIsOpen(false);
-            setFormData({ url: "", reason: "" });
+            setFormData({ url: "", category: "", reason: "" });
             router.refresh(); // Refresh server components
         } catch (error: any) {
             console.error(error);
@@ -75,6 +78,27 @@ export function RegistrationForm() {
                                         setFormData({ ...formData, url: e.target.value })
                                     }
                                 />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-zinc-300">
+                                    카테고리 선택
+                                </label>
+                                <select
+                                    required
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white/20 transition-all appearance-none cursor-pointer"
+                                    value={formData.category} // Assuming you add category to state
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, category: e.target.value })
+                                    }
+                                >
+                                    <option value="" disabled>카테고리를 선택해주세요</option>
+                                    {CATEGORIES.filter(c => c.id !== 'all').map((category) => (
+                                        <option key={category.id} value={category.label}>
+                                            {category.label}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="space-y-2">
