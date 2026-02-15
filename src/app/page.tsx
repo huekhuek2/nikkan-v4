@@ -1,6 +1,7 @@
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { ChannelCard } from "@/components/ChannelCard";
 import { RegistrationForm } from "@/components/RegistrationForm";
+import { EditChannelModal } from "@/components/EditChannelModal";
 import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Channel } from "@prisma/client";
@@ -93,6 +94,7 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
 
         <RegistrationForm />
+        <EditChannelModal />
       </div>
     </main>
   );

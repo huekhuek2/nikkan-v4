@@ -17,6 +17,7 @@ interface ChannelCardProps {
 }
 
 export function ChannelCard({
+    id,
     name,
     thumbnail,
     subscribers,
@@ -61,10 +62,7 @@ export function ChannelCard({
                         </h3>
                     </div>
 
-                    <div className="flex items-center text-zinc-400 text-sm gap-1.5">
-                        <Users className="w-4 h-4" />
-                        <span>구독자 {subscribers}</span>
-                    </div>
+                    {/* Removed Subscriber Count as per request */}
 
                     <p className="text-sm text-zinc-400 line-clamp-2 leading-relaxed h-[2.5rem]">
                         {description}
@@ -74,20 +72,25 @@ export function ChannelCard({
 
             {/* Footer / Action Area - separate from Link */}
             <div className="bg-zinc-950/50 p-3 border-t border-zinc-800 flex items-center justify-between mt-auto">
-                {!isVerified ? (
-                    <button
-                        onClick={handleClaimClick}
-                        className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors ml-auto"
-                    >
-                        <User className="w-3 h-3" />
-                        이 채널의 주인이신가요?
-                    </button>
-                ) : (
-                    <div className="text-xs text-blue-500/80 ml-auto font-medium flex items-center gap-1">
-                        <BadgeCheck className="w-3 h-3" />
-                        공식 인증 채널
-                    </div>
-                )}
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Open edit modal logic will be implemented here or passed as prop
+                        // For now, simpler to emit an event or use a client component approach
+                        // Since this is a server component rendered list, maybe we need a client wrapper or context?
+                        // Actually ChannelCard is "use client".
+                        // Let's use a custom event or a simple prompt for now, or better: a new component `EditChannelModal` triggers here.
+                        // I'll dispatch a custom event that a global modal listener can pick up, or better yet, put the modal IN the card? No, inefficient.
+                        // Best: ChannelCard triggers a state in a parent provider. But that's complex for this quick fix.
+                        // Quickest: Put the EditModal inside ChannelCard but only render when open.
+                        document.dispatchEvent(new CustomEvent('openEditModal', { detail: { id, name, category, description } }));
+                    }}
+                    className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-white transition-colors ml-auto"
+                >
+                    <User className="w-3 h-3" />
+                    정보 수정
+                </button>
             </div>
         </div>
     );
